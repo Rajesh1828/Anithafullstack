@@ -18,10 +18,10 @@ import ScrollToTop from './components/ScrollToTop'
 import PlaceOrder from './Pages/PlaceOrder'
 import Orders from './Pages/Orders'
 
+
 const App = () => {
   return (
     <div>
-      
       <Navbar/>
       <ScrollToTop/>
       <Routes>

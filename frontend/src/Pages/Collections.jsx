@@ -61,7 +61,7 @@ const sortProducts=()=>{
 
 useEffect(()=>{
 applyFilter()
-},[category,subCategory])
+},[category,subCategory,products])
 
 useEffect(()=>{
 sortProducts()

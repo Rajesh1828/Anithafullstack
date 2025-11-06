@@ -7,8 +7,21 @@ import DynamicHeropage from '../components/DynamicHeropage/DynamicHeropage';
 
 const Cart = () => {
 
-  const { products, currency, cartItems, addToCart, getCartItemsCount, updateQuantity,navigate } = useContext(ShopContext);
+  const { products, currency, cartItems, addToCart, getCartItemsCount, updateQuantity,navigate,token } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
+  const[message,setMessage]=useState("");
+
+  const handleCheckOut =()=>{
+    if(token){
+      navigate("/place-order")
+    }else{
+      setTimeout(()=>{
+        setMessage("Please login to checkout");
+        navigate("/login")
+      },1000)
+    }
+
+  }
 
   useEffect(() => {
     let tempData = [];
@@ -24,7 +37,7 @@ const Cart = () => {
       }
     }
     setCartData(tempData);
-  }, [cartItems])
+  }, [cartItems, products]);
 
 
   return (
@@ -130,12 +143,12 @@ const Cart = () => {
         {
           cartData.length>0 && <div className='w-full sm:w-[450px]'>
           <CartTotal/>
-          <div className='mt-5'>
-            <Link to="/place-order">
-            <button  className="bg-violet-700 hover:bg-violet-800 text-white px-8 py-2 rounded-full font-medium transition-all cursor-pointer">
+          <div onClick={handleCheckOut} className='mt-5'>
+              <button  className="bg-violet-700 hover:bg-violet-800 text-white px-8 py-2 rounded-full font-medium transition-all cursor-pointer">
               Proceed to Checkout →
             </button>
-            </Link>
+              {message && <p className="text-red-500 mt-2">{message}</p>}
+
           </div>
         </div>
         }

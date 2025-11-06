@@ -8,12 +8,13 @@ import RelatedProducts from '../components/RelatedProducts/RelatedProducts';
 
 const Product = () => {
   const { id } = useParams();
-  const { products, currency, addToCart } = useContext(ShopContext);
+  const { products, currency, addToCart,error } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
-  const [sizes, setSizes] = useState([]);
+  const [size, setSize] = useState(null);
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
+
 
 
   const fetchProductData = () => {
@@ -36,7 +37,7 @@ const Product = () => {
   }
 
   // WhatsApp order link
-  const whatsappMessage = `Hi, I want to order ${productData?.name} in size ${sizes || 'N/A'}.`;
+  const whatsappMessage = `Hi, I want to order ${productData?.name} in size ${size || 'N/A'}.`;
   const whatsappLink = `https://wa.me/9849180401?text=${encodeURIComponent(whatsappMessage)}`;
 
   return productData ? (
@@ -79,7 +80,7 @@ const Product = () => {
             <div className='flex gap-2'>
               {
                 productData.sizes.map((item, index) => (
-                  <button onClick={() => setSizes(item)} key={index} className={` bg-violet-300 border border-violet-400 px-4 py-2 ${item === sizes ? 'bg-violet-600 text-white' : ''} cursor-pointer  text-sm`}>{item}</button>
+                  <button onClick={() => setSize(item)} key={index} className={` bg-violet-300 border border-violet-400 px-4 py-2 ${item === size ? 'bg-violet-600 text-white' : ''} cursor-pointer  text-sm`}>{item}</button>
                 ))
               }
             </div>
@@ -87,8 +88,8 @@ const Product = () => {
           
 
           <div className='flex gap-6'>
-
-            <button onClick={()=>addToCart(productData._id,sizes)} className='bg-violet-600 text-white px-4 py-2 rounded-md'>Add To Cart</button>
+             
+            <button onClick={()=>addToCart(productData._id,size)} className='bg-violet-600 text-white px-4 py-2 rounded-md'>Add To Cart</button>
             <a
               href={whatsappLink}
               target="_blank"

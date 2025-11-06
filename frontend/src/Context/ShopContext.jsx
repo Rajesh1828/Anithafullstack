@@ -1,25 +1,34 @@
-import { createContext, useEffect, useState } from "react";
-import { products } from "../assets/assets";
+import { createContext, use, useEffect, useState } from "react";
+// import { products } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 
 
 
 export const ShopContext = createContext();
 
-const currency = "₹";
-const deliveryFee = 50
+
 
 const ShopContextProvider = (props) => {
     
+    const currency = "₹";
+    const deliveryFee = 50
+    const  backendUrl = import.meta.env.VITE_BACKEND_URL
     const navigate = useNavigate()
+    const[token,setToken]=useState('')
+    const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
+
+    
     
     // Add to cart
     const addToCart = async (itemId, size) => {
+        if(!size) 
+            return  alert("Please select a size")
+        
         let cartData = structuredClone(cartItems);
-
+        
         if (cartData[itemId]) {
             if (cartData[itemId][size]) {
                 cartData[itemId][size]++;
@@ -32,14 +41,67 @@ const ShopContextProvider = (props) => {
             cartData[itemId][size] = 1;
         }
         setCartItems(cartData)
+        if(token){
+            try {
+                await axios.post(backendUrl+"/api/cart/add-to-cart",{itemId,size},
+                    {headers:{authorization:`Bearer ${token}`}}
+                )
+            } catch (error) {
+                console.log(error);
+                alert(error.response?.data?.message || "Failed to add to cart");
+                
+            }
+        }
     }
 
+
+
+
     //update Quantity
-const updateQuantity =async(itemId,size,quantity)=>{
-    let cartItemsCopy = structuredClone(cartItems)
-    cartItemsCopy[itemId][size] = quantity
-    setCartItems(cartItemsCopy)
+const updateQuantity = async (itemId, size, quantity) => {
+  let cartData = structuredClone(cartItems);
+  cartData[itemId][size] = quantity;
+  if (quantity <= 0) {
+    delete cartData[itemId][size];
+    if (Object.keys(cartData[itemId]).length === 0) {
+      delete cartData[itemId];
+    }
+  }
+  setCartItems(cartData);
+  if (token) {
+    try {
+      await axios.post(
+        `${backendUrl}/api/cart/update`,
+        { itemId, size, quantity },
+        { headers: { authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to update quantity");
+    }
+  }
+};
+
+
+
+//getUserCart
+
+const getUserCart =async()=>{
+    try {
+        const response = await axios.get(backendUrl+"/api/cart/get-cart-items",{headers:{authorization:`Bearer ${token}`}})
+        if(response.data.success){
+            // console.log(response.data.cartData);
+            setCartItems(response.data.cartData)
+
+        }
+    } catch (error) {
+     console.log(error);
+     alert(error.response?.data?.message || "Failed to get cart items");   
+    }
 }
+
+
+
 
 //getCartTotal Amount
 
@@ -56,6 +118,47 @@ const getCartTotalAmount =()=>{
     }
     return totalAmount
 }
+
+
+
+
+//getProducts 
+const getProducts = async()=>{
+    try {
+        const response = await axios.get(backendUrl+"/api/product/list-product")
+        if(response.data.success){
+         setProducts(response.data.products)
+        }else{
+            alert(response.data.message)
+            console.log(response.data.message);
+        }
+    } catch (error) {
+        console.log(error);
+        alert(error.response?.data?.message || "Failed to fetch products");
+    }
+}
+
+useEffect(()=>{
+    const savedToken = localStorage.getItem("token")
+    const savedName = localStorage.getItem("username")
+    if(savedToken){
+        setToken(savedToken)
+    }
+    if(savedName){
+        setUserName(savedName)
+    }
+    getProducts();
+},[products])
+
+
+useEffect(()=>{
+   
+    if(token){
+        getUserCart()
+    }
+},[token])
+
+
 
 
 //get cart items count
@@ -81,11 +184,16 @@ const getCartTotalAmount =()=>{
         currency,
         deliveryFee,
         cartItems,
+        setCartItems,
         navigate,
         addToCart,
         getCartItemsCount,
         updateQuantity,
-        getCartTotalAmount
+        getCartTotalAmount,
+        backendUrl,
+        token,
+        setToken,
+       
     }
 
     return (
