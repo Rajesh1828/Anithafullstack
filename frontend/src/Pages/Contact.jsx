@@ -1,11 +1,15 @@
 import React from 'react'
 import DynamicHeropage from '../components/DynamicHeropage/DynamicHeropage'
+import Address from '../components/ContactComponets/Address'
+import ContactForm from '../components/ContactForm/ContactForm'
 
 const Contact = () => {
   return (
     <div>
       <DynamicHeropage/>
-      Contact</div>
+       <Address/>
+       <ContactForm/>
+      </div>
   )
 }
 

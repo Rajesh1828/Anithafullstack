@@ -5,7 +5,7 @@ import { BsSend } from "react-icons/bs";
 
 const NewsLetter = () => {
   return (
-    <div className="flex flex-col items-center justify-evenly text-center gap-6 md:flex-row md:justify-between md:px-20 bg-gray-500 md:py-10 py-8 px-6 rounded-br-[60px] md:rounded-br-[100px]">
+    <div className="flex flex-col items-center justify-evenly text-center gap-6 md:flex-row md:justify-between md:px-20 bg-gray-500 md:py-10 py-8 px-6 rounded-br-[60px] md:rounded-br-[100px] md:rounded-bl-[100px]">
       
       {/* Text Section */}
       <h2 className="font-bold text-white text-2xl md:text-3xl leading-snug md:w-1/2">

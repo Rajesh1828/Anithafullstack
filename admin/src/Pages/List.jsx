@@ -6,10 +6,11 @@ import { FaRupeeSign } from "react-icons/fa";
 
 const List = ({ token }) => {
   const [products, setProducts] = React.useState([]);
-
+  const [Loading, setLoading] = React.useState(false)
   // ✅ Fetch Products
   const fetchProducts = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(backendUrl + "/api/product/list-product", {
         headers: {
           authorization: `Bearer ${token}`,
@@ -20,36 +21,39 @@ const List = ({ token }) => {
       console.log(error);
       toast.error(error.response?.data?.message || "Failed to fetch products");
     }
+    finally {
+      setLoading(false)
+    }
   };
 
   // ✅ Remove Product
-const removeProduct = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this product?")) return;
+  const removeProduct = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
 
-  const token = localStorage.getItem("token"); // ✅ ensure token is fetched properly
+    const token = localStorage.getItem("token"); // ✅ ensure token is fetched properly
 
-  if (!token) {
-    toast.error("No token found. Please log in again.");
-    return;
-  }
+    if (!token) {
+      toast.error("No token found. Please log in again.");
+      return;
+    }
 
-  try {
-    const response = await axios.delete(
-      `${backendUrl}/api/product/remove-product/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      }
-    );
+    try {
+      const response = await axios.delete(
+        `${backendUrl}/api/product/remove-product/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    toast.success(response.data.message);
-    fetchProducts(); 
-  } catch (error) {
-    console.error("Delete product error:", error);
-    toast.error(error.response?.data?.message || "Failed to remove product");
-  }
-};
+      toast.success(response.data.message);
+      fetchProducts();
+    } catch (error) {
+      console.error("Delete product error:", error);
+      toast.error(error.response?.data?.message || "Failed to remove product");
+    }
+  };
 
 
   // ✅ useEffect for initial fetch
@@ -74,8 +78,18 @@ const removeProduct = async (id) => {
       </div>
 
       {/* Product List */}
+
       <div className="flex flex-col gap-3 mt-3">
-        {products.length === 0 ? (
+        {Loading ? <div className="flex items-center justify-center min-h-[50vh] 0">
+          <div className="flex flex-col items-center">
+
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-violet-900"></div>
+            <p className="mt-4 text-base font-medium text-violet-950 animate-pulse"> Loading...</p>
+          </div>
+
+
+
+        </div> : products.length === 0 ? (
           <p className="text-center text-gray-500 py-10">No products found.</p>
         ) : (
           products.map((item, index) => (

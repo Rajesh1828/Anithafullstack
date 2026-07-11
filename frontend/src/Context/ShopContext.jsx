@@ -14,7 +14,7 @@ const ShopContextProvider = (props) => {
     
     const currency = "₹";
     const deliveryFee = 50
-    const  backendUrl = import.meta.env.VITE_BACKEND_URL
+    const  backendUrl = "http://localhost:5000"
     const navigate = useNavigate()
     const[token,setToken]=useState('')
     const [products, setProducts] = useState([])
@@ -125,7 +125,7 @@ const getCartTotalAmount =()=>{
 //getProducts 
 const getProducts = async()=>{
     try {
-        const response = await axios.get(backendUrl+"/api/product/list-product")
+        const response = await axios.get(`${backendUrl}/api/product/list-product`)
         if(response.data.success){
          setProducts(response.data.products)
         }else{

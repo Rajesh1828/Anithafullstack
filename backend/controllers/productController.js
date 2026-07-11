@@ -51,20 +51,18 @@ const addProducts = async(req,res)=>{
 
 
 //List all products
-
-const listProducts = async(req,res)=>{
-
-    try {
-        const products = await productModel.find({});
-        res.json({success:true,products})
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({success:false,message:error.message})
-        
-    }
-    
-}
+ const listProducts = async (req, res) => {
+  try {
+    const products = await productModel.find({});
+    res.json({ success: true, products });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
 
 //remove product
@@ -99,6 +97,20 @@ const singleProducts = async(req,res)=>{
 
 }
 
+    //search products
+    const searchProducts = async(req,res)=>{
+        try {
+            const{query,limit=10}=req.query;
+            const products = await productModel.find({
+                name:{$regex:query,$options:"i"}
+            }).limit(parseInt(limit));
+            res.json({success:true,products})
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({success:false,message:error.message})
+        }
+
+    }
 
 
-export {addProducts,listProducts,removeProducts,singleProducts}
+export {addProducts,listProducts,removeProducts,singleProducts,searchProducts}

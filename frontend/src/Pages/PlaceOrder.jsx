@@ -27,40 +27,52 @@ const PlaceOrder = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-//initPay 
-const initPay =(order)=>{
-  const options={
-    key:import.meta.env.VITE_RAZORPAY_KEY_ID,
-    amount:order.amount,
-    currency:order.currency,
-    name:'Anitha',
-    description:'Anitha',
-    order_id:order.id,
-    receipt:order.receipt,
-handler: async (response) => {
-  try {
-    const { data } = await axios.post(
-      `${backendUrl}/api/orders/verify-payment`,
-      response,
-      { headers: { authorization: `Bearer ${token}` } }
-    );
+  //initPay 
+  const initPay = (order) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: 'Anitha Ecommerce',
+      description: 'Payment for order',
+      order_id: order.id,
+      receipt: order.receipt,
+      prefill: {
+      contact: "",
+      email: ""
+    },
 
-    if (data.success) {
-      alert(data.message);
-      navigate("/orders");
-      setCartItems({});
+    method: {
+      upi: true,
+      card: true,
+      netbanking: true,
+      wallet: true,
+      emi: true
+    },
+      handler: async (response) => {
+        try {
+          const { data } = await axios.post(
+            `${backendUrl}/api/orders/verify-payment`,
+            response,
+            { headers: { authorization: `Bearer ${token}` } }
+          );
+
+          if (data.success) {
+            alert(data.message);
+            navigate("/orders");
+            setCartItems({});
+          }
+        } catch (error) {
+          console.log(error);
+          alert(error.response?.data?.message || "Failed to verify payment");
+        }
+      }
+
+
     }
-  } catch (error) {
-    console.log(error);
-    alert(error.response?.data?.message || "Failed to verify payment");
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   }
-}
-
-
-  }
-  const rzp= new window.Razorpay(options);
-  rzp.open();
-}
 
 
   const onHandleSubmit = async (e) => {
@@ -88,6 +100,9 @@ handler: async (response) => {
         amount: getCartTotalAmount() + deliveryFee,
         address: formData,
       };
+  
+
+      //payment sections
 
       switch (method) {
         case "COD":
@@ -250,8 +265,8 @@ handler: async (response) => {
               <div
                 onClick={() => setMethod("razorpay")}
                 className={`flex items-center gap-3 border p-3 rounded-xl cursor-pointer transition-all ${method === "razorpay"
-                    ? "border-violet-600 bg-violet-50 shadow-md"
-                    : "hover:border-violet-400"
+                  ? "border-violet-600 bg-violet-50 shadow-md"
+                  : "hover:border-violet-400"
                   }`}
               >
                 <span
@@ -265,8 +280,8 @@ handler: async (response) => {
               <div
                 onClick={() => setMethod("stripe")}
                 className={`flex items-center gap-3 border p-3 rounded-xl cursor-pointer transition-all ${method === "stripe"
-                    ? "border-blue-600 bg-blue-50 shadow-md"
-                    : "hover:border-blue-400"
+                  ? "border-blue-600 bg-blue-50 shadow-md"
+                  : "hover:border-blue-400"
                   }`}
               >
                 <span
@@ -280,8 +295,8 @@ handler: async (response) => {
               <div
                 onClick={() => setMethod("COD")}
                 className={`flex items-center gap-3 border p-3 rounded-xl cursor-pointer transition-all ${method === "COD"
-                    ? "border-green-600 bg-green-50 shadow-md"
-                    : "hover:border-green-400"
+                  ? "border-green-600 bg-green-50 shadow-md"
+                  : "hover:border-green-400"
                   }`}
               >
                 <span

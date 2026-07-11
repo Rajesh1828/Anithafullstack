@@ -7,7 +7,7 @@ import DynamicHeropage from '../components/DynamicHeropage/DynamicHeropage';
 
 const Cart = () => {
 
-  const { products, currency, cartItems, addToCart, getCartItemsCount, updateQuantity,navigate,token } = useContext(ShopContext);
+  const { products, cartItems,  getCartItemsCount, updateQuantity,navigate,token } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
   const[message,setMessage]=useState("");
 

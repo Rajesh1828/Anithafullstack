@@ -18,8 +18,7 @@ const ProductItem = ({ id, image, name, price, color }) => {
                     Color:
                     <span
                         className="w-4 h-4 rounded-full border border-gray-300"
-                        style={{ backgroundColor: color }}
-></span>
+                        style={{ backgroundColor: color }}></span>
                     <span className="capitalize font-medium">{color}</span>
                 </p>
 

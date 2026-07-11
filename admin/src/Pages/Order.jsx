@@ -4,6 +4,7 @@ import { backendUrl } from "../App";
 
 const Order = ({ token }) => {
   const [orders, setOrders] = useState([]);
+  const[Loading,setLoading]=useState(false)
 
   const statusHandler=async(orderId,e)=>{
     try {
@@ -22,7 +23,9 @@ const Order = ({ token }) => {
   }
   const fetchAllOrders = async () => {
     try {
+setLoading(true)
       if (!token) return;
+
       const response = await axios.get(`${backendUrl}/api/orders/all-orders`, {
         headers: { authorization: `Bearer ${token}` },
       });
@@ -32,7 +35,10 @@ const Order = ({ token }) => {
       }
     } catch (error) {
       console.error("Error fetching orders:", error.message);
-    }
+    }finally{
+        setLoading(false)
+    }   
+    
   };
 
   useEffect(() => {
@@ -45,7 +51,17 @@ const Order = ({ token }) => {
         All Orders
       </h1>
 
-      {orders.length === 0 ? (
+     
+      {Loading ? (
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <div className="flex flex-col items-center">
+            <div className="w-22 h-22 border-b-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-violet-700 font-medium text-base animate-pulse">
+             PleaseWait Loading orders...
+            </p>
+          </div>
+        </div>
+       ) : orders.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">
           No orders available yet.
         </p>

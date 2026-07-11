@@ -51,6 +51,7 @@ const Add = ({ token }) => {
             setSubCategory("Topwear");
             setDescription("");
             setBestseller(false);
+            
         }else{
             toast.error(response.data.message);
         }
@@ -59,13 +60,16 @@ const Add = ({ token }) => {
         toast.error(error.response.data.message);
         
     }finally{
+        alert("Product added successfully");
         setLoading(false);
     }
    }
 
 
     return (
+        
         <form onSubmit={onSubmitHandle} className="flex flex-col w-full items-start gap-6 bg-white  rounded-2xl p-6">
+            {}
             <div className="w-full">
                 <p className="mb-2 text-xl font-semibold text-gray-700">Upload Images</p>
                 <div className="flex gap-4 flex-wrap">
