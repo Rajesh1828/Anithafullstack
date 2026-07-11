@@ -13,6 +13,7 @@ phases:
   build:
     commands:
       - echo Building Docker image...
+      - cd backend
       - docker build -t anitha-backend .
       - docker tag anitha-backend:latest $REPOSITORY_URI:$IMAGE_TAG
 
